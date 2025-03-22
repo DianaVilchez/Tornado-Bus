@@ -78,7 +78,7 @@ export default function SearchForm() {
 
           <div className="form-options">
             <label> Fecha de Viaje:</label>
-            <Field type="date" id="travelDate" name="travelDate"/>
+            <Field type="date" id="travelDate" name="travelDate" min={new Date().toLocaleDateString("sv-SE")}  />
             <ErrorMessage name="travelDate" />
           </div>
 

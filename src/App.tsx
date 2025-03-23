@@ -1,13 +1,16 @@
-import './App.css';
-import Navbar from './components/Navbar';
-import SearchForm from './components/SearchForm'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
+import SearchForm from "./components/SearchForm";
+import SearchResults from "./components/SearchResults";
 
 function App() {
   return (
-   <section>
-    <Navbar />
-    <SearchForm />
-   </section>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SearchForm />} />
+        <Route path="/results" element={<SearchResults />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-export default App
+export default App;

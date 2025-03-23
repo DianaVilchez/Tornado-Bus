@@ -34,7 +34,7 @@ const CityField: React.FC<CityFieldProps> = ({
               "https://discovery.local.onroadts.com/v1/web/select/origin";
           } else if (type === "destination") {
             if (!cityInitId) {
-              console.warn("No se proporcionó cityInitId para el campo destino");
+              console.log("No se proporcionó cityInitId para el campo destino");
               return;
             }
             endpoint = `https://discovery.local.onroadts.com/v1/web/select/destiny/${cityInitId}`;

@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import CityField from "./CityField";
 import { useState } from "react";
 import PassengerModal from "./PassengerModal";
+import { useNavigate } from "react-router-dom";
 
 const searchSchema = Yup.object({
   originCity: Yup.string().required("La ciudad de origen es obligatoria"),
@@ -20,22 +21,31 @@ export default function SearchForm() {
   const [cityInitId, setCityInitId] = useState<number |  undefined>(undefined);
   const [showModal, setShowModal] = useState(false);
   const [passengerCount, setPassengerCount] = useState(1);
+
+  const navigate = useNavigate(); 
+  
   return (
     <Formik
       initialValues={{
         originCity: "",
+        originCityName: "",
         destinationCity: "",
+        destinationCityName:"",
         travelDate: "",
-        passengerCount: 1,
+        passengerDefault: 1,
       }}
       validationSchema={searchSchema}
       onSubmit={(values) => {
-        console.log(values);
+        console.log("Valores enviados al navegar:", values);
+        navigate("/results", { state: values });
       }}
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {(formikProps) => (
+      {(formikProps) => {
+        console.log("Valores actuales:", formikProps.values);
+
+        return (
         
         <Form className="form-container">
           <div className="form-options">
@@ -50,7 +60,8 @@ export default function SearchForm() {
                   cityInitId={cityInitId}
                   onSelectCity={(city) => {
                     setCityInitId(city.id);
-                    formikProps.setFieldValue("originCity", city);
+                    form.setFieldValue("originCity", city.id);
+                    form.setFieldValue("originCityName",city.name)
                   }}
                 />
               )}
@@ -70,7 +81,8 @@ export default function SearchForm() {
                   cityInitId={cityInitId} 
                   onSelectCity={(city: { id: number; name: string }) => {
                     setCityInitId(city.id);
-                    form.setFieldValue("destinationCity", city);
+                    form.setFieldValue("destinationCity", city.id);
+                    form.setFieldValue("destinationCityName", city.name);
                   }}
                 />
               )}
@@ -102,10 +114,13 @@ export default function SearchForm() {
               }}
             />
           )}
-
+{formikProps.errors && (
+  <pre style={{ color: "red" }}>{JSON.stringify(formikProps.errors, null, 2)}</pre>
+)}
           <button type="submit">Buscar</button>
         </Form>
-      )}
+        )
+}}
     </Formik>
   );
 }

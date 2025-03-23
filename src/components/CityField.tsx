@@ -18,7 +18,7 @@ const CityField: React.FC<CityFieldProps> = ({
   cityInitId,
   onSelectCity,
 }) => {
-    const { name, value, onBlur } = field;
+    const {  value  } = field;
   const [query, setQuery] = useState<string>(
     typeof value === "string" ? value : value?.name || ""
   );
@@ -62,16 +62,6 @@ const CityField: React.FC<CityFieldProps> = ({
   };
   return (
     <div className="field-city">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          form.setFieldValue(name, e.target.value);
-        }}
-        onBlur={onBlur}
-        placeholder={`Ciudad de ${type}`}
-      />
       {suggestions.length > 0 && (
         <ul className="suggestions">
           {suggestions.map((city) => (

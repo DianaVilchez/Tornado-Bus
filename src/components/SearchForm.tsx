@@ -2,6 +2,7 @@ import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
 import * as Yup from "yup";
 import CityField from "./CityField";
 import { useState } from "react";
+import PassengerModal from "./PassengerModal";
 
 const searchSchema = Yup.object({
   originCity: Yup.string().required("La ciudad de origen es obligatoria"),
@@ -17,7 +18,8 @@ const searchSchema = Yup.object({
 
 export default function SearchForm() {
   const [cityInitId, setCityInitId] = useState<number |  undefined>(undefined);
-
+  const [showModal, setShowModal] = useState(false);
+  const [passengerCount, setPassengerCount] = useState(1);
   return (
     <Formik
       initialValues={{
@@ -34,6 +36,7 @@ export default function SearchForm() {
       validateOnBlur={false}
     >
       {(formikProps) => (
+        
         <Form className="form-container">
           <div className="form-options">
             <label> Ciudad de Origen:</label>
@@ -84,9 +87,21 @@ export default function SearchForm() {
 
           <div className="form-options">
             <label> Pasajeros:</label>
-            <Field type="number" id="passengers" name="passengers" />
+            <Field type="number" id="passengers" name="passengers" 
+            value={`${passengerCount}`}
+            onClick= {() => setShowModal(true)}/>
             <ErrorMessage name="passengers" />
           </div>
+          {showModal && (
+            <PassengerModal
+              open={showModal}
+              onClose={() => setShowModal(false)} // Cierra el modal
+              onTotalChange={(total) => {
+                setPassengerCount(total); // Actualiza el número de pasajeros
+                formikProps.setFieldValue("passengers", total); // Actualiza Formik
+              }}
+            />
+          )}
 
           <button type="submit">Buscar</button>
         </Form>

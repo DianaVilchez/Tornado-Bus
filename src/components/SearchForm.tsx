@@ -4,6 +4,7 @@ import CityField from "./CityField";
 import { useState } from "react";
 import PassengerModal from "./PassengerModal";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 const searchSchema = Yup.object({
   originCity: Yup.string().required("La ciudad de origen es obligatoria"),
@@ -16,21 +17,24 @@ const searchSchema = Yup.object({
     .required("El numero de pasajero es obligatorio"),
 });
 
-
 export default function SearchForm() {
-  const [cityInitId, setCityInitId] = useState<number |  undefined>(undefined);
+  const [cityInitId, setCityInitId] = useState<number | undefined>(undefined);
   const [showModal, setShowModal] = useState(false);
   const [passengerCount, setPassengerCount] = useState(1);
+  const [showCityField, setShowCityField] = useState(false);
+  const [showDestinationCityField, setShowDestinationCityField] = useState(false);
 
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   return (
+    <>
+    <Navbar />
     <Formik
       initialValues={{
         originCity: "",
         originCityName: "",
         destinationCity: "",
-        destinationCityName:"",
+        destinationCityName: "",
         travelDate: "",
         passengerDefault: 1,
       }}
@@ -46,81 +50,127 @@ export default function SearchForm() {
         console.log("Valores actuales:", formikProps.values);
 
         return (
-        
-        <Form className="form-container">
-          <div className="form-options">
-            <label> Ciudad de Origen:</label>
-            <Field name="originCity">
-              {({ field, form, meta }: FieldProps) => (
-                <CityField
-                  field={field}
-                  form={form}
-                  meta={meta}
-                  type="origin"
-                  cityInitId={cityInitId}
-                  onSelectCity={(city) => {
-                    setCityInitId(city.id);
-                    form.setFieldValue("originCity", city.id);
-                    form.setFieldValue("originCityName",city.name)
-                  }}
-                />
-              )}
-            </Field>
-            <ErrorMessage name="originCity" />
-          </div>
+          <Form className="form-container">
+            <div className="form-options">
+              <label> Ciudad de Origen:</label>
+              <Field name="originCity">
+                {({ field, form, meta }: FieldProps) => (
+                  <>
+                    <div
+                      className="city-input"
+                      onClick={() => setShowCityField(true)}
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {form.values.originCityName || "Selecciona una ciudad"}
+                    </div>
 
-          <div className="form-options">
-            <label> Ciudad de Destino:</label>
-            <Field name="destinationCity">
-              {({ field, form, meta }: FieldProps) => (
-                <CityField
-                  field={field}
-                  form={form}
-                  meta={meta}
-                  type="destination"
-                  cityInitId={cityInitId} 
-                  onSelectCity={(city: { id: number; name: string }) => {
-                    setCityInitId(city.id);
-                    form.setFieldValue("destinationCity", city.id);
-                    form.setFieldValue("destinationCityName", city.name);
-                  }}
-                />
-              )}
-            </Field>
+                    {showCityField && (
+                      <CityField
+                        field={field}
+                        form={form}
+                        meta={meta}
+                        type="origin"
+                        cityInitId={cityInitId}
+                        onSelectCity={(city) => {
+                          setCityInitId(city.id);
+                          form.setFieldValue("originCity", city.id);
+                          form.setFieldValue("originCityName", city.name);
+                          setShowCityField(false); // Oculta CityField tras selección
+                        }}
+                      />
+                    )}
+                    <ErrorMessage name="originCity" />
+                  </>
+                )}
+              </Field>
+              <ErrorMessage name="originCity" />
+            </div>
 
-            <ErrorMessage name="destinationCity" />
-          </div>
+            <div className="form-options">
+              <label> Ciudad de Destino:</label>
+              <Field name="destinationCity">
+                {({ field, form, meta }: FieldProps) => (
+                    <>
+                    <div
+                      className="city-input"
+                      onClick={() => setShowDestinationCityField(true)}
+                      style={{
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        cursor: "pointer",
+                      }}
+                    >
+                        {form.values.destinationCityName || "Selecciona una ciudad"}
+                    </div>
+                    {showDestinationCityField && (
+                  <CityField
+                    field={field}
+                    form={form}
+                    meta={meta}
+                    type="destination"
+                    cityInitId={cityInitId}
+                    onSelectCity={(city: { id: number; name: string }) => {
+                      setCityInitId(city.id);
+                      form.setFieldValue("destinationCity", city.id);
+                      form.setFieldValue("destinationCityName", city.name);
+                      setShowDestinationCityField(false);
+                    }}
+                  />
+                )}
+                <ErrorMessage name="destinationCity" />
+                </>
+                )}
+              </Field>
 
-          <div className="form-options">
-            <label> Fecha de Viaje:</label>
-            <Field type="date" id="travelDate" name="travelDate" min={new Date().toLocaleDateString("sv-SE")}  />
-            <ErrorMessage name="travelDate" />
-          </div>
+              <ErrorMessage name="destinationCity" />
+            </div>
 
-          <div className="form-options">
-            <label> Pasajeros:</label>
-            <Field type="number" id="passengers" name="passengers" 
-            value={`${passengerCount}`}
-            onClick= {() => setShowModal(true)}/>
-            <ErrorMessage name="passengers" />
-          </div>
-          {showModal && (
-            <PassengerModal
-              open={showModal}
-              onClose={() => setShowModal(false)} // Cierra el modal
-              onTotalChange={(total) => {
-                setPassengerCount(total); // Actualiza el número de pasajeros
-                formikProps.setFieldValue("passengers", total); // Actualiza Formik
-              }}
-            />
-          )}
-{formikProps.errors && (
-  <pre style={{ color: "red" }}>{JSON.stringify(formikProps.errors, null, 2)}</pre>
-)}
-          <button type="submit">Buscar</button>
-        </Form>
-        )
-}}
+            <div className="form-options">
+              <label> Fecha de Viaje:</label>
+              <Field
+                type="date"
+                id="travelDate"
+                name="travelDate"
+                min={new Date().toLocaleDateString("sv-SE")}
+              />
+              <ErrorMessage name="travelDate" />
+            </div>
+
+            <div className="form-options">
+              <label> Pasajeros:</label>
+              <Field
+                type="number"
+                id="passengers"
+                name="passengers"
+                value={`${passengerCount}`}
+                onClick={() => setShowModal(true)}
+              />
+              <ErrorMessage name="passengers" />
+            </div>
+            {showModal && (
+              <PassengerModal
+                open={showModal}
+                onClose={() => setShowModal(false)} // Cierra el modal
+                onTotalChange={(total) => {
+                  setPassengerCount(total); // Actualiza el número de pasajeros
+                  formikProps.setFieldValue("passengers", total); // Actualiza Formik
+                }}
+              />
+            )}
+            {formikProps.errors && (
+              <pre style={{ color: "red" }}>
+                {JSON.stringify(formikProps.errors, null, 2)}
+              </pre>
+            )}
+            <button type="submit">Buscar</button>
+          </Form>
+        );
+      }}
     </Formik>
+    </>
   );
 }

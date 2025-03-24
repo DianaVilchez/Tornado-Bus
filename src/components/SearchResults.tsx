@@ -35,7 +35,7 @@ export default function SearchResults() {
   const [data, setData] = useState<TravelData[]>([]);
   
   const handleClick = (item: TravelData) => {
-    navigate("/detalle", { state: { selectedTravel: item } }); 
+    navigate("/details", { state: { selectedTravel: item } }); 
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +74,7 @@ export default function SearchResults() {
   return (
     <BackgroundWrapper background="#EFEFEF">
       <Navbar />
-      <section>
+      <section style={{display:"flex", flexDirection:"column",alignItems:"center"}}>
         <div className="container-summary">
           <div className="summary-search">
             <div>

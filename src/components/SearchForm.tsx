@@ -159,11 +159,6 @@ export default function SearchForm() {
                 }}
               />
             )}
-            {formikProps.errors && (
-              <pre style={{ color: "red" }}>
-                {JSON.stringify(formikProps.errors, null, 2)}
-              </pre>
-            )}
             <button type="submit" className="button-search">Buscar</button>
           </Form>
         );

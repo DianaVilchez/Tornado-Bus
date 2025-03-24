@@ -127,6 +127,13 @@ label{
   margin: 10px;
   font-weight: bolder;
 }
+.details-content{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 70px;
+}
 @media (max-width: 1024px) {
   .form-container{
     width: 95vw;
@@ -162,6 +169,9 @@ label{
   }
   .option{
     width:95vw;
+  }
+  .details-content{
+    flex-direction: column;
   }
 }
 

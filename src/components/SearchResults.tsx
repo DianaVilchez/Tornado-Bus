@@ -1,6 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import arrow from "../assets/arrow.svg";
+import person from "../assets/person.svg";
+import BackgroundWrapper from "./Background";
+import Navbar from "./Navbar";
 
 type TravelData = {
   id: number;
@@ -25,10 +29,14 @@ type TravelData = {
 export default function SearchResults() {
   const location = useLocation();
   const searchParams = location.state;
+  const navigate = useNavigate();
   console.log("Datos recibidos", searchParams);
 
   const [data, setData] = useState<TravelData[]>([]);
-
+  
+  const handleClick = (item: TravelData) => {
+    navigate("/detalle", { state: { selectedTravel: item } }); 
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -64,22 +72,53 @@ export default function SearchResults() {
   }, [searchParams]);
 
   return (
-    <div>
-      <p>Ciudad de origen: {searchParams.originCityName}</p>
-      <p>Ciudad de destino: {searchParams.destinationCityName}</p>
-      <p>Fecha de viaje: {searchParams.travelDate}</p>
-      <p>Pasajeros: {searchParams.passengers}</p>
-
-      <h1>Resultados de búsqueda</h1>
-      <ul>
-        {data.map((item) => (
-          <li key={item.id}>
-            {item.HourInitFormat}
-            {item.dateInitFormat}
-          </li>
-          
-        ))}
-      </ul>
-    </div>
+    <BackgroundWrapper background="#EFEFEF">
+      <Navbar />
+      <section>
+        <div className="container-summary">
+          <div className="summary-search">
+            <div>
+              <p> {searchParams.originCityName.toUpperCase()}</p>
+              <p> {searchParams.travelDate}</p>
+            </div>
+            <div>
+              <img src={arrow} alt="Logo" width="60vw" height="50" />
+            </div>
+            <div>
+              <p>{searchParams.destinationCityName.toUpperCase()}</p>
+            </div>
+            <img src={person} alt="Logo" width="80vw" height="50" />
+            <p>{searchParams.passengers}</p>
+          </div>
+        </div>
+        <h2>Resultados de búsqueda</h2>
+        <div>
+          {data.map((item) => (
+            <div className="option" key={item.id} onClick={() => handleClick(item)}>
+              <div className="tripOptions">
+                <div className="dataOptions">
+                  <p>{item.HourInitFormat}</p>
+                  <p>{item.cityInit.toUpperCase()}</p>
+                </div>
+                <div className="dataOptions">
+                <img src={arrow} alt="Logo" width="60vw" height="50" />
+                <p>{item.travelTime}</p>
+                </div>
+                <div className="dataOptions">
+                  <p>{item.HourEndFormat}</p>
+                  <p>{item.cityEnd.toUpperCase()}</p>
+                </div>
+              </div>
+              <p>
+                Por persona{" "}
+                <span style={{ color: "#FD971A", fontWeight: "bolder", fontSize:"20px" }}>
+                  {item.currencyID}
+                </span>
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </BackgroundWrapper>
   );
 }

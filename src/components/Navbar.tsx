@@ -3,13 +3,16 @@ import logo from "../assets/logo.svg";
 
 const Nav = styled.nav`
 display: flex;
-padding: 1rem;
-align-items: left;
+padding: 1rem 6vw;
+align-items: center;
+background: white;
+height: 3.5vw;
+box-shadow: 0px 5px 16px 0px rgba(145,136,145,1);
 `
 export default function Navbar (){
     return(
         <Nav>
-            <img src={logo} alt="Logo" width="100" height="100"/>
+            <img src={logo} alt="Logo" width="200vw" height="50"/>
         </Nav>
     )
 }

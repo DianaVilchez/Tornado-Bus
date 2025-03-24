@@ -4,7 +4,6 @@ import CityField from "./CityField";
 import { useState } from "react";
 import PassengerModal from "./PassengerModal";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
 
 const searchSchema = Yup.object({
   originCity: Yup.string().required("La ciudad de origen es obligatoria"),
@@ -28,7 +27,6 @@ export default function SearchForm() {
 
   return (
     <>
-    <Navbar />
     <Formik
       initialValues={{
         originCity: "",
@@ -52,7 +50,7 @@ export default function SearchForm() {
         return (
           <Form className="form-container">
             <div className="form-options">
-              <label> Ciudad de Origen:</label>
+              <label> CIUDAD DE ORIGEN </label>
               <Field name="originCity">
                 {({ field, form, meta }: FieldProps) => (
                   <>
@@ -65,7 +63,7 @@ export default function SearchForm() {
                         cursor: "pointer",
                       }}
                     >
-                      {form.values.originCityName || "Selecciona una ciudad"}
+                      {form.values.originCityName || "Saliendo Desde..."}
                     </div>
 
                     {showCityField && (
@@ -91,7 +89,7 @@ export default function SearchForm() {
             </div>
 
             <div className="form-options">
-              <label> Ciudad de Destino:</label>
+              <label> CIUDAD DE DESTINO</label>
               <Field name="destinationCity">
                 {({ field, form, meta }: FieldProps) => (
                     <>
@@ -104,7 +102,7 @@ export default function SearchForm() {
                         cursor: "pointer",
                       }}
                     >
-                        {form.values.destinationCityName || "Selecciona una ciudad"}
+                        {form.values.destinationCityName || "Hacia..."}
                     </div>
                     {showDestinationCityField && (
                   <CityField
@@ -130,7 +128,7 @@ export default function SearchForm() {
             </div>
 
             <div className="form-options">
-              <label> Fecha de Viaje:</label>
+              <label> FECHA </label>
               <Field
                 type="date"
                 id="travelDate"
@@ -141,7 +139,7 @@ export default function SearchForm() {
             </div>
 
             <div className="form-options">
-              <label> Pasajeros:</label>
+              <label> PASAJEROS </label>
               <Field
                 type="number"
                 id="passengers"
@@ -166,7 +164,7 @@ export default function SearchForm() {
                 {JSON.stringify(formikProps.errors, null, 2)}
               </pre>
             )}
-            <button type="submit">Buscar</button>
+            <button type="submit" className="button-search">Buscar</button>
           </Form>
         );
       }}

@@ -35,7 +35,7 @@ export default function SearchForm() {
           destinationCity: "",
           destinationCityName: "",
           travelDate: "",
-          passengerDefault: 1,
+          passengers: 1,
         }}
         validationSchema={searchSchema}
         onSubmit={(values) => {
@@ -111,7 +111,7 @@ export default function SearchForm() {
                   onClose={() => setShowModal(false)} 
                   onTotalChange={(total) => {
                     setPassengerCount(total); 
-                    formikProps.setFieldValue("passengers", total); 
+                    formikProps.setFieldValue("passengers", total); // Actualiza Formik
                   }}
                 />
               )}

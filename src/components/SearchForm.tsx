@@ -5,12 +5,13 @@ import { useState } from "react";
 import PassengerModal from "./PassengerModal";
 import { useNavigate } from "react-router-dom";
 import { City } from "../services/cityService";
-
+const today = new Date();
+today.setHours(0, 0, 0, 0);
 const searchSchema = Yup.object({
   originCity: Yup.string().required("La ciudad de origen es obligatoria"),
   destinationCity: Yup.string().required("La ciudad de destino es obligatoria"),
   travelDate: Yup.date()
-    .min(new Date(), "La fecha no debe ser menor a la de hoy")
+    .min(today, "La fecha no debe ser menor a la de hoy")
     .required("La fecha de viaje es obligatoria"),
   passengers: Yup.number()
     .min(1, "Debe de seleccionar almenos un pasajero")
@@ -23,7 +24,8 @@ export default function SearchForm() {
   const [showModal, setShowModal] = useState(false);
   const [passengerCount, setPassengerCount] = useState(1);
 
-
+const fecha =new Date().toLocaleDateString("sv-SE");
+console.log(fecha)
   const navigate = useNavigate();
 
   return (

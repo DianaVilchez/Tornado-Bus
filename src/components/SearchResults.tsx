@@ -92,7 +92,7 @@ export default function SearchResults() {
           </div>
         </div>
         <h2>Resultados de búsqueda</h2>
-        <div>
+        { data.length >0 ? (<div>
           {data.map((item) => (
             <div className="option" key={item.id} onClick={() => handleClick(item)}>
               <div className="tripOptions">
@@ -117,7 +117,7 @@ export default function SearchResults() {
               </p>
             </div>
           ))}
-        </div>
+        </div>) : <h3>No se encontraron viajes disponibles</h3>}
       </section>
     </BackgroundWrapper>
   );

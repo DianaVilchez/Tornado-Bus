@@ -1,24 +1,21 @@
 import { Dialog, Switch } from "@mui/material";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { getPassengerTypes, PassengerType } from "../services/passengerTypesServices";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
-interface Passenger {
-  id: number;
-  disabled: boolean;
-}
-interface PassengerType {
-  id: number;
-  name: string;
-  ageMin: number;
-  ageMax: number;
-  passenger: Passenger[];
+export type PassengerCount = {
+  total: number;
+  byType: Record<string, number>;
+  disabilityInfo: {
+    totalDisabled: number;
+    byType: Record<string, number>;
+  };
 }
 interface PassengerModalProps {
   open: boolean;
   onClose: () => void;
-  onTotalChange: (total: number) => void;
+  onTotalChange: ({ total, byType, disabilityInfo }: PassengerCount) => void;
 }
 
 export default function PassengerModal({
@@ -29,22 +26,17 @@ export default function PassengerModal({
   const [types, setTypes] = useState<PassengerType[]>([]);
 
   useEffect(() => {
-    axios
-      .get("https://api.local.onroadts.com/v1/web/select/type")
-      .then((res) => {
-        const data = res.data.data;
-        console.log("Datos API", res.data.data);
+    const fetchPassengerTypes = async () => {
+      try {
+        const passengerTypes = await getPassengerTypes();
+        console.log("passengerTypes",passengerTypes)
+        setTypes(passengerTypes);
+      } catch (error) {
+        console.error("Error cargando tipos de pasajero", error);
+      }
+    };
 
-        const formatted = data.map((type: any) => ({
-          id: type.id,
-          name: type.name,
-          ageMin: type.ageMin,
-          ageMax: type.ageMax,
-          passenger: [],
-        }));
-        setTypes(formatted);
-      })
-      .catch((error) => console.error("Error obteniendo datos", error));
+    fetchPassengerTypes();
   }, []);
 
   const addPassenger = (typeIndex: number) => {
@@ -52,15 +44,17 @@ export default function PassengerModal({
       const newPassenger = prev.map((type, i) =>
         i === typeIndex
           ? {
-              ...type,
-              passenger: [
-                ...type.passenger,
-                { id: type.passenger.length + 1, disabled: false },
-              ],
-            }
+            ...type,
+            passenger: [
+              ...type.passenger,
+              { id: type.passenger.length + 1, disabled: false },
+            ],
+          }
           : type
       );
       console.log("🚀 Pasajero agregado:", newPassenger);
+      console.log("🚀 adultos", (newPassenger[0].passenger).length)
+      console.log("adultos")
       return newPassenger;
     });
   };
@@ -82,11 +76,11 @@ export default function PassengerModal({
       const disabled = prev.map((type, i) =>
         i === typeIndex
           ? {
-              ...type,
-              passenger: type.passenger.map((p) =>
-                p.id === passengerId ? { ...p, disabled: !p.disabled } : p
-              ),
-            }
+            ...type,
+            passenger: type.passenger.map((p) =>
+              p.id === passengerId ? { ...p, disabled: !p.disabled } : p
+            ),
+          }
           : type
       );
       console.log("🚀 Pasajero con Discapacidad:", disabled);
@@ -94,72 +88,100 @@ export default function PassengerModal({
     });
   };
   const handleContinue = () => {
-    let totalPassengers = 0;
-
+    const result = {
+      total: 0,
+      byType: {} as Record<string, number>,
+      disabilityInfo: {
+        totalDisabled: 0,
+        byType: {} as Record<string, number>
+      }
+    };
+    console.log("🚀 Estado actual EN handleContinue:", JSON.parse(JSON.stringify(types)));
     types.forEach((type) => {
-      totalPassengers += type.passenger.length;
-    });
-    console.log(`${totalPassengers} pasajeros`);
+      let typeKey: string;
+      switch(true) {
+        case type.name.includes("Adulto"):
+        typeKey = "adult";  
+        break;
+        case type.name.includes("Niño"):
+          typeKey = "child";
+          break;
+          case type.name.includes("Senior"):
+            typeKey = "senior";
+            break;
+            default:
+              typeKey = "other";
+      }
+    
+  result.byType[typeKey] = type.passenger.length;
+  result.total += type.passenger.length;
 
-    onTotalChange(totalPassengers);
-    onClose();
+  const disabledCount = type.passenger.filter(p => p.disabled).length;
+    result.disabilityInfo.byType[typeKey] = disabledCount;
+    result.disabilityInfo.totalDisabled += disabledCount;
+});
+
+console.log(`${result.total} pasajeros`);
+
+onTotalChange(result);
+onClose();
   };
-  return (
-    <Dialog open={open} onClose={onClose}>
-      <section className="modal-Passengers">
-        <button style={{ right: "0" }} onClick={onClose}>x</button>
-        {types.map((type, typeIndex) => (
-          <div key={type.id}>
-            <div className="count-typePassenger">
-              <div>
-                <h2
-                  style={{
-                    fontFamily: "'Martel Sans',sans-serif",
-                    fontSize: "18px",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {type.name.toUpperCase()}
-                </h2>
-                <h3>
-                  De {type.ageMin} a {type.ageMax} años{" "}
-                </h3>
-              </div>
-              <div>
-                <button
-                  style={{ backgroundColor: "#FB8A00" }}
-                  onClick={() => addPassenger(typeIndex)}
-                >
-                  {" "}
-                  +{" "}
-                </button>
-                <button
-                  style={{ backgroundColor: "#FB8A00", marginLeft:"20px" }}
-                  onClick={() => removePassenger(typeIndex)}
-                >
-                  {" "}
-                  -{" "}
-                </button>
-              </div>
+return (
+  <Dialog open={open} onClose={onClose}>
+    <section className="modal-Passengers">
+      <button style={{ right: "0" }} onClick={onClose}>x</button>
+      {types.map((type, typeIndex) => (
+        <div key={type.id}>
+          <div className="count-typePassenger">
+            <div>
+              <h2
+                style={{
+                  fontFamily: "'Martel Sans',sans-serif",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                }}
+              >
+                {type.name.toUpperCase()}
+              </h2>
+              <h3>
+                De {type.ageMin} a {type.ageMax} años{" "}
+              </h3>
             </div>
             <div>
-              {type.passenger.map((passenger) => (
-                <div key={passenger.id}>
-                  {type.name.toUpperCase()} {passenger.id}
-                  <Switch
-                    {...label}
-                    // checked={passenger.disabled}
-                    onChange={() => toggleDisabled(typeIndex, passenger.id)}
-                  />
-                  ♿
-                </div>
-              ))}
+              <button
+                style={{ backgroundColor: "#FB8A00" }}
+                onClick={() => addPassenger(typeIndex)}
+              >
+                {" "}
+                +{" "}
+              </button>
+              <button
+                style={{ backgroundColor: "#FB8A00", marginLeft: "20px" }}
+                onClick={() => removePassenger(typeIndex)}
+              >
+                {" "}
+                -{" "}
+              </button>
             </div>
           </div>
-        ))}
-        {/* <p>{total}</p> */}
-        <button className="button-search" onClick={handleContinue}> Continuar </button>
-      </section>
-    </Dialog>
-  );
+          <div>
+            {type.passenger.map((passenger) => (
+              <div key={passenger.id}>
+                {type.name.toUpperCase()} {passenger.id}
+                <Switch
+                  {...label}
+                  // checked={passenger.disabled}
+                  onChange={() => toggleDisabled(typeIndex, passenger.id)}
+                />
+                ♿
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      {/* <p>{total}</p> */}
+      <button className="button-search" onClick={handleContinue}> Continuar </button>
+    </section>
+  </Dialog>
+);
 }

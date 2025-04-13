@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import arrow from "../assets/arrow.svg";
 import person from "../assets/person.svg";
 import BackgroundWrapper from "./Background";
@@ -27,28 +27,41 @@ type TravelData = {
   currency: string;
 };
 export default function SearchResults() {
-  const location = useLocation();
-  const searchParams = location.state;
-  const navigate = useNavigate();
-  console.log("Datos recibidos", searchParams);
 
-  const [data, setData] = useState<TravelData[]>([]);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  console.log("Datos recibidos", searchParams);
+  const newSearchParams = new URLSearchParams(searchParams.toString());
   
   const handleClick = (item: TravelData) => {
-    navigate("/details", { state: { selectedTravel: item } }); 
+    newSearchParams.set('travelId', item.id.toString());
+    navigate(`/details?${newSearchParams}`); 
   };
+
+  const [data, setData] = useState<TravelData[]>([]);
+
+  const searchData = {
+    originCity: searchParams.get('originCity') || '',
+    originCityName: searchParams.get('originCityName') || '',
+    destinationCity: searchParams.get('destinationCity') || '',
+    destinationCityName: searchParams.get('destinationCityName') || '',
+    travelDate: searchParams.get('travelDate') || '',
+    passengers: parseInt(searchParams.get('passengers') || '1')
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
+        
         const response = await axios.post(
           "https://discovery.local.onroadts.com/v1/web/list/departure-travels?isMultiRoute=true&isReturn=false",
           {
             limit: 25,
             page: 1,
             filters: {
-              date: searchParams.travelDate,
-              city: [searchParams.originCity, searchParams.destinationCity],
-              passengerNumber: 1,
+              date: searchData.travelDate,
+              city: [Number(searchData.originCity), Number(searchData.destinationCity)],
+              passengerNumber: searchData.passengers,
               passengerDisabilityNumber: 0,
               orderTravel: 1060,
               orderMaxMinTravel: 1,
@@ -65,10 +78,18 @@ export default function SearchResults() {
         console.log("Respuesta del servidor:", response.data);
         setData(response.data.data);
       } catch (error) {
-        console.error("Error en la solicitud:", error);
+        if (axios.isAxiosError(error)) {
+          console.error("Error detallado:", {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+          });
+        } else {
+          console.error("Error inesperado:", error);
+        }
       }
     };
-    if (searchParams) fetchData();
+    if (searchData) fetchData();
   }, [searchParams]);
 
   return (
@@ -78,17 +99,17 @@ export default function SearchResults() {
         <div className="container-summary">
           <div className="summary-search">
             <div>
-              <p> {searchParams.originCityName.toUpperCase()}</p>
-              <p> {searchParams.travelDate}</p>
+              <p> {searchData.originCityName.toUpperCase()}</p>
+              <p> {searchData.travelDate}</p>
             </div>
             <div>
               <img src={arrow} alt="Logo" width="60vw" height="50" />
             </div>
             <div>
-              <p>{searchParams.destinationCityName.toUpperCase()}</p>
+              <p>{searchData.destinationCityName.toUpperCase()}</p>
             </div>
             <img src={person} alt="Logo" width="80vw" height="50" />
-            <p>{searchParams.passengers}</p>
+            <p>{searchData.passengers}</p>
           </div>
         </div>
         <h2>Resultados de búsqueda</h2>

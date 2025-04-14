@@ -21,7 +21,7 @@ const searchSchema = Yup.object({
 
 export default function SearchForm() {
   const [origin, setOrigin] = useState<City | null>(null);
-  const [destination, setDestination] = useState<City | null>(null);
+  const [, setDestination] = useState<City | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [passengerCount, setPassengerCount] = useState<PassengerCount>({
     total:1,
@@ -109,7 +109,7 @@ console.log(fecha)
               <div className="form-options">
                 <label> FECHA </label>
                 <Field
-                style={{borderRadius:"20px", fontSize:"17px",color:"#9B9595", padding:"7px",borderStyle: "solid",borderColor:"#9B9595",borderWidth:"0.8px"}}
+                style={{borderRadius:"20px", fontSize:"17px",color:"#9B9595", padding:"7px",borderStyle: "solid",borderColor:"#9B9595",borderWidth:"0.8px", width:"auto"}}
                   type="date"
                   id="travelDate"
                   name="travelDate"

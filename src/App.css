@@ -200,6 +200,7 @@ justify-content: center;
   }
   .details-content{
     flex-direction: column;
+    align-items: center;
   }
   .form-options{
     width: auto;

@@ -2,9 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import arrow from "../assets/arrow.svg";
-import person from "../assets/person.svg";
 import BackgroundWrapper from "./Background";
 import Navbar from "./Navbar";
+import { ContainerSummary } from "./containerSummary";
 
 type TravelData = {
   id: number;
@@ -35,7 +35,7 @@ export default function SearchResults() {
   
   const handleClick = (item: TravelData) => {
     newSearchParams.set('travelId', item.id.toString());
-    navigate(`/details?${newSearchParams}`); 
+    navigate(`/details?${newSearchParams}`, { state: { selectedTravel: item } }); 
   };
 
   const [data, setData] = useState<TravelData[]>([]);
@@ -95,30 +95,21 @@ export default function SearchResults() {
   return (
     <BackgroundWrapper background="#EFEFEF">
       <Navbar />
+      <ContainerSummary
+        originCityName={searchData.originCityName.toUpperCase()}
+        destinationCityName={searchData.destinationCityName.toUpperCase()}
+        passengers={searchData.passengers.toString()}
+        showHours={true}
+        dateInitFormat ={searchData.travelDate}
+      />
       <section style={{display:"flex", flexDirection:"column",alignItems:"center"}}>
-        <div className="container-summary">
-          <div className="summary-search">
-            <div>
-              <p> {searchData.originCityName.toUpperCase()}</p>
-              <p> {searchData.travelDate}</p>
-            </div>
-            <div>
-              <img src={arrow} alt="Logo" width="60vw" height="50" />
-            </div>
-            <div>
-              <p>{searchData.destinationCityName.toUpperCase()}</p>
-            </div>
-            <img src={person} alt="Logo" width="80vw" height="50" />
-            <p>{searchData.passengers}</p>
-          </div>
-        </div>
         <h2>Resultados de búsqueda</h2>
         { data.length >0 ? (<div>
           {data.map((item) => (
             <div className="option" key={item.id} onClick={() => handleClick(item)}>
               <div className="tripOptions">
                 <div className="dataOptions">
-                  <p>{item.HourInitFormat}</p>
+                  <p style={{ fontSize:"22px"}}>{item.HourInitFormat}</p>
                   <p>{item.cityInit.toUpperCase()}</p>
                 </div>
                 <div className="dataOptions">
@@ -126,14 +117,14 @@ export default function SearchResults() {
                 <p>{item.travelTime}</p>
                 </div>
                 <div className="dataOptions">
-                  <p>{item.HourEndFormat}</p>
+                  <p style={{ fontSize:"22px"}}>{item.HourEndFormat}</p>
                   <p>{item.cityEnd.toUpperCase()}</p>
                 </div>
               </div>
-              <p>
+              <p style={{ marginTop:"0px"}}>
                 Por persona{" "}
-                <span style={{ color: "#FD971A", fontWeight: "bolder", fontSize:"20px" }}>
-                  {item.currencyID}
+                <span style={{ color: "#FD971A", fontWeight: "bolder", fontSize:"20px"}}>
+                  {item.currencyID} USD 
                 </span>
               </p>
             </div>

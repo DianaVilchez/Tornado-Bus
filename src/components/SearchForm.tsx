@@ -118,7 +118,7 @@ console.log(fecha)
                 <ErrorMessage name="travelDate" />
               </div>
 
-              <div className="form-options">
+              <div className="form-options"  >
                 <label> PASAJEROS </label>
                 <Field
                 style={{borderRadius:"20px", fontSize:"17px",color:"#9B9595", padding:"7px",borderStyle: "solid",borderColor:"#9B9595",borderWidth:"0.8px"}}

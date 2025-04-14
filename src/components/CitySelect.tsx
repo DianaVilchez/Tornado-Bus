@@ -17,6 +17,12 @@ const loadOptions = async (inputValue: string) => {
 }
 return (
   <AsyncSelect
+  styles={{control: (baseStyles) => ({
+    ...baseStyles,
+    borderColor:'#9B9595',
+    borderRadius:'80px',
+    padding:'0px',
+  })}}
   defaultOptions={true}
   loadOptions={loadOptions}
   onChange={(option) => {

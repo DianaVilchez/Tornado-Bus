@@ -1,19 +1,26 @@
 import { ReactNode } from "react";
+import styled from "styled-components";
 
 interface BackgroundWrapperProps {
   children: ReactNode;
-  background: string; // Puede ser un color o una imagen
+  background: string;
 }
 
-const BackgroundWrapper = ({ children, background }: BackgroundWrapperProps) => {
-  const style: React.CSSProperties = {
-    background: background.includes("url") ? background : background, // Si es una imagen, usa `url()`
+const StyledBackgroundWrapper = styled.div<{ $backgroung: string }>`
+    background : ${(props) => props.$backgroung};
     backgroundSize: "cover",
     backgroundPosition: "center",
-    minHeight: "100vh",
-  };
+    minHeight: "100vh",`;
 
-  return <div style={style}>{children}</div>;
-};
+const BackgroundWrapper = ({
+  children,
+  background,
+}: BackgroundWrapperProps) => {
+
+  return( 
+  <StyledBackgroundWrapper $backgroung={background}>
+  {children}
+  </StyledBackgroundWrapper>
+)};
 
 export default BackgroundWrapper;

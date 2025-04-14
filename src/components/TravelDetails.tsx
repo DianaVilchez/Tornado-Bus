@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import arrow from "../assets/arrow.svg";
-import person from "../assets/person.svg";
+import { useLocation, useSearchParams } from "react-router-dom";
 import SeatIcon from "@mui/icons-material/Weekend";
 import Person4Icon from "@mui/icons-material/Person4";
 import StairsIcon from "@mui/icons-material/Stairs";
+import AccessibleIcon from '@mui/icons-material/Accessible';
 import {
   Table,
   TableBody,
@@ -17,6 +16,8 @@ import {
 } from "@mui/material";
 import BackgroundWrapper from "./Background";
 import Navbar from "./Navbar";
+import { ContainerSummary } from "./containerSummary";
+import ButtonModal from "./buttonModal";
 interface Seat {
   id: number;
   row: number;
@@ -27,6 +28,9 @@ interface Seat {
 }
 
 export default function TravelDetails() {
+
+  const location = useLocation();
+  const paramsState = location.state;
   const [searchParams] = useSearchParams();
   console.log("Datos recibidos", searchParams);
   const travelId = searchParams.get("travelId");
@@ -34,8 +38,16 @@ export default function TravelDetails() {
   const cityInit = searchParams.get("originCityName") || "";
   const cityEndId = searchParams.get("destinationCity");
   const cityEnd = searchParams.get("destinationCityName") || "";
-  const travelDate = searchParams.get("travelDate");
+  // const disabledAdults = searchParams.get("disabledAdults");
+  // const disabledChildren = searchParams.get("disabledChildren");
+  const travelDateEnd = paramsState.selectedTravel.dateEndFormat;
   const passengers = searchParams.get("passengers");
+  const numberPassengers = Number(passengers);
+  const hourInitFormat = paramsState.selectedTravel.HourInitFormat;
+  console.log('hourInitFormat',hourInitFormat)
+  const hourEndFormat = paramsState.selectedTravel.HourEndFormat;
+  const dateInitFormat = paramsState.selectedTravel.dateInitFormat;
+  
 
   const [seats, setSeats] = useState<Seat[]>([]);
   const [selectedCount, setSelectedCount] = useState(1);
@@ -91,6 +103,19 @@ export default function TravelDetails() {
         return "white";
     }
   };
+  const maxSelectedCount = Number(passengers) ;
+ const disabledPassengers = Number(searchParams.get("disabledAdults")) + 
+                             Number(searchParams.get("disabledChildren"));
+ const passengerRegular = numberPassengers - disabledPassengers;
+ const currentDisabledSelections = seats.filter(s => 
+  s.icon === "discapacitados" && s.status === "Seleccionado"
+).length;
+const currentRegularSelections = seats.filter(s => 
+  s.icon === "asiento" && s.status === "Seleccionado"
+).length;
+console.log('currentRegularSelections',currentRegularSelections)
+console.log('seats',seats)
+console.log('seats',seats)
 
   const handleSelection = async (seatId: number) => {
     const dataFetchSelection = {
@@ -112,12 +137,34 @@ export default function TravelDetails() {
       externalInitID: null,
       externalEndID: null,
     };
+    const seat = seats.find(s => s.id === seatId);
+    if (seat?.icon === "asiento") {
+      
 
-    const maxSelectedCount = Number(passengers);
+      if (currentRegularSelections >= passengerRegular) {
+        alert(`Ya ha seleccionado el máximo de ${passengerRegular} asientos regulares`);
+        return;
+      }
+    }
+  if (seat?.icon === "discapacitados") {
+    if (disabledPassengers === 0) {
+      alert("No ha registrado pasajeros con discapacidad en su búsqueda");
+      return;
+    }
+    
+    
+    
+    if (currentDisabledSelections >= disabledPassengers) {
+      alert(`Ya ha seleccionado el máximo de ${disabledPassengers} asientos para discapacitados`);
+      return;
+    }
+  }
+  const totalSelected = seats.filter(s => s.status === "Seleccionado").length;
+    
     console.log("maximo de pasajeros",maxSelectedCount)
     console.log("aientos seleccionados",selectedCount)
 
-    if (selectedCount > maxSelectedCount) {
+    if (totalSelected >= maxSelectedCount) {
       alert(`Ya has seleccionado el máximo de ${maxSelectedCount} asientos`);
       return;
     }
@@ -140,7 +187,6 @@ export default function TravelDetails() {
       const updatedSeatsResponse = response.data.data.busSketch[0].seats
       
       if (updatedSeatsResponse) {
-        // Actualizar el estado local con los nuevos datos
         const updatedSeats = seats.map((seat) => {
           const updatedSeat = updatedSeatsResponse.find(
             (s: any) => s.id === seat.id
@@ -159,27 +205,22 @@ export default function TravelDetails() {
       console.error("Error al obtener los detalles del viaje:", error);
     }
   };
+  console.log('asientos seleccionados:',currentRegularSelections + currentDisabledSelections)
 
   return (
     <BackgroundWrapper background="#EFEFEF">
       <Navbar />
 
-      <div className="container-summary">
-        <div className="summary-search">
-          <div>
-            <p> {cityInit.toUpperCase()}</p>
-            <p> {travelDate}</p>
-          </div>
-          <div>
-            <img src={arrow} alt="Logo" width="60vw" height="50" />
-          </div>
-          <div>
-            <p>{cityEnd.toUpperCase()}</p>
-          </div>
-          <img src={person} alt="Logo" width="80vw" height="50" />
-          <p>{passengers}</p>
-        </div>
-      </div>
+      <ContainerSummary
+  originCityName={cityInit}
+  destinationCityName={cityEnd}
+  passengers={passengers}
+  showHours={true}
+  departureTime={hourInitFormat}
+  arrivalTime={hourEndFormat}
+  travelDateEnd = {travelDateEnd}
+  dateInitFormat ={dateInitFormat}
+/>
 
       <h2>Detalles del viaje</h2>
       <section className="details-content">
@@ -195,7 +236,7 @@ export default function TravelDetails() {
                     <TableRow key={column}>
                       {seats
                         .filter((seat) => seat.column === column)
-                        .sort((a, b) => a.column - b.column) // Ordenar por columna
+                        .sort((a, b) => a.column - b.column)
                         .map((seat) => (
                           <TableCell
                             key={seat.id}
@@ -217,7 +258,17 @@ export default function TravelDetails() {
                                   cursor: "pointer",
                                 }}
                               />
-                            ) : (
+                            ) : seat.icon === "discapacitados" ? (
+                              <AccessibleIcon
+                              onClick={() => handleSelection(seat.id)}
+                                sx={{
+                                  fontSize: 40,
+                                  color: getSeatColor(seat.status, seat.icon),
+                                  cursor: "pointer",
+                                  
+                                }}
+                              />
+                            ): (
                               <SeatIcon
                                 onClick={() => handleSelection(seat.id)}
                                 sx={{
@@ -237,7 +288,7 @@ export default function TravelDetails() {
           </TableContainer>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems:"center"}}>
           <h3>Estado de asientos</h3>
           <div
             className="seat-status"
@@ -261,8 +312,27 @@ export default function TravelDetails() {
             />
             <p>Ocupado</p>
           </div>
-          <button className="button-search">continuar</button>
+          
+          <div>
+            
+          <h3>Asientos por seleccionar</h3>
+          <div className="total-passengers">
+            <div>
+          <h4> ASIENTOS REGULAR </h4>
+          <div> {passengerRegular} sitios</div>
+          </div>
+          <div>
+          <h4> ACCESIBILIDAD </h4>
+          <div> {disabledPassengers} sitios </div>
+          </div>
+          </div>
         </div>
+        <ButtonModal 
+  totalSelected={currentRegularSelections + currentDisabledSelections}
+  totalRequired={maxSelectedCount}
+/>
+        </div>
+        
       </section>
     </BackgroundWrapper>
   );

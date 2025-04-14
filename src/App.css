@@ -1,3 +1,6 @@
+*{
+ font-family:"League Spartan", sans-serif;
+}
 #root {
   width: 100%;
   height: 100%;
@@ -23,14 +26,15 @@ html, body {
   padding: 1rem;
   background-color: #E8F2FF;
   border-radius:20px;
-  width: 70vw;
+  width: 75vw;
   box-shadow: 8px 10px 3px -3px rgba(145,136,145,0.68);
 }
 .form-options{
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  background-color: white;
+  width: 20vw;
+  /* background-color: white; */
   margin: 5px;
   border-radius:10px;
 }
@@ -60,7 +64,8 @@ label{
 .button-search{
   background-color: #96C3FF;
   box-shadow: 0px 1px 4px 0.5px rgba(0,75,173,1);
-  font-size: "League Spartan", sans-serif;
+  font-family: "League Spartan", sans-serif;
+  font-size: 22px;
   color:#004AAD;
   font-weight: bold;
   width: 150px;
@@ -70,6 +75,7 @@ label{
   align-items: center;
   justify-content: center;
   align-self: center;
+  margin-top: 15px;
 }
 .modal-Passengers{
   width: 30vw;
@@ -88,17 +94,17 @@ label{
   flex-direction: row;
   background-color: #D9E9FF;
   border-radius: 20px;
-  padding:10px;
+  padding:15px 10px;
   font-family:"Martel Sans", sans-serif ;
+  font-size: 17px;
   font-weight:bolder;
   color: #053474;
   margin:2vw 5vw;
   align-items: center;
 }
-.container-summary{
-  padding:2vw;
-  background-color: white;
-  box-shadow:  -1px 6px 16px -6px rgba(145,136,145,0.68),inset -36px 100px 16px -93px rgba(145,136,145,0.68);
+.summary-search p {
+  margin: 0px;
+
 }
 .option{
   display: flex;
@@ -107,14 +113,22 @@ label{
   width:800px;
   border-radius: 20px;
   margin: 2vw 0;
+  box-shadow: 3px 4px 23px -8px rgba(0,0,0,0.66);
+  cursor: grab;
+  font-family: "League Spartan";
+  font-size: 16px;
+}
+.option:hover {
+  border: 2px solid rgb(237, 103, 7); 
 }
 .tripOptions{
   color:#053474;
-  font-weight: bold;
+  /* font-weight: bold; */
   font-size: "League Spartan", sans-serif;
   display: flex;
   flex-direction: row;
   align-items: center;
+justify-content: center;
 
 }
 
@@ -133,6 +147,18 @@ label{
   justify-content: center;
   align-items: center;
   gap: 70px;
+  align-items: flex-start
+}
+.total-passengers{
+  display: flex;
+  flex-direction: row;
+}
+.total-passengers h4{
+  background-color: #FD971A;
+  margin: 20px 10px;
+  padding: 6px 12px;
+  border-radius: 15px;
+  color:white;
 }
 @media (max-width: 1024px) {
   .form-container{
@@ -165,13 +191,21 @@ label{
     width: 70vw;
   }
   .summary-search{
-    margin:2vw 0.5vw;
+    margin:2vw 0;
+    padding:2px 2px ;
+    font-size: 16px;
   }
   .option{
     width:95vw;
   }
   .details-content{
     flex-direction: column;
+  }
+  .form-options{
+    width: auto;
+  }
+  .summary-search{
+    font-size: 15px;
   }
 }
 

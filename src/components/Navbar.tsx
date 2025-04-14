@@ -9,14 +9,24 @@ background: white;
 height: 3.5vw;
 box-shadow: 0px 5px 16px 0px rgba(145,136,145,1);
 @media (max-width: 768px) {
-    height: 80px;
-    padding: 1px 6vw;
+    height: 60px;
+    align-items: flex-end;
+    padding: 3px 6vw;
   }
-`
-export default function Navbar (){
-    return(
-        <Nav>
-            <img src={logo} alt="Logo" width="200vw" height="50"/>
-        </Nav>
-    )
+`;
+const Logo = styled.img`
+  height: 20;
+  width: 17vw;
+
+  @media (max-width: 768px) {
+    width: fit-content;
+    height: 25px;
+  }
+`;
+export default function Navbar() {
+  return (
+    <Nav>
+      <Logo src={logo} alt="Logo" />
+    </Nav>
+  );
 }

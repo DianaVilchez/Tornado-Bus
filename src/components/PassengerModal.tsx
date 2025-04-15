@@ -1,5 +1,6 @@
+
 import { Dialog, Switch } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getPassengerTypes, PassengerType } from "../services/passengerTypesServices";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
@@ -29,7 +30,6 @@ export default function PassengerModal({
     const fetchPassengerTypes = async () => {
       try {
         const passengerTypes = await getPassengerTypes();
-        console.log("passengerTypes",passengerTypes)
         setTypes(passengerTypes);
       } catch (error) {
         console.error("Error cargando tipos de pasajero", error);
@@ -53,8 +53,6 @@ export default function PassengerModal({
           : type
       );
       console.log("🚀 Pasajero agregado:", newPassenger);
-      console.log("🚀 adultos", (newPassenger[0].passenger).length)
-      console.log("adultos")
       return newPassenger;
     });
   };
@@ -96,7 +94,6 @@ export default function PassengerModal({
         byType: {} as Record<string, number>
       }
     };
-    console.log("🚀 Estado actual EN handleContinue:", JSON.parse(JSON.stringify(types)));
     types.forEach((type) => {
       let typeKey: string;
       switch(true) {

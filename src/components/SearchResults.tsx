@@ -74,19 +74,10 @@ export default function SearchResults() {
             },
           }
         );
-
         console.log("Respuesta del servidor:", response.data);
         setData(response.data.data);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error("Error detallado:", {
-            message: error.message,
-            response: error.response?.data,
-            status: error.response?.status,
-          });
-        } else {
+      } catch (error) {      
           console.error("Error inesperado:", error);
-        }
       }
     };
     if (searchData) fetchData();

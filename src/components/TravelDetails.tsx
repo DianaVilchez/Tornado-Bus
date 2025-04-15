@@ -32,7 +32,6 @@ export default function TravelDetails() {
   const location = useLocation();
   const paramsState = location.state;
   const [searchParams] = useSearchParams();
-  console.log("Datos recibidos", searchParams);
   const travelId = searchParams.get("travelId");
   const cityInitId = searchParams.get("originCity");
   const cityInit = searchParams.get("originCityName") || "";
@@ -44,13 +43,12 @@ export default function TravelDetails() {
   const passengers = searchParams.get("passengers");
   const numberPassengers = Number(passengers);
   const hourInitFormat = paramsState.selectedTravel.HourInitFormat;
-  console.log('hourInitFormat',hourInitFormat)
   const hourEndFormat = paramsState.selectedTravel.HourEndFormat;
   const dateInitFormat = paramsState.selectedTravel.dateInitFormat;
   
 
   const [seats, setSeats] = useState<Seat[]>([]);
-  const [selectedCount, setSelectedCount] = useState(1);
+  const [, setSelectedCount] = useState(1);
 
   const fetchData = async () => {
     try {
@@ -59,8 +57,8 @@ export default function TravelDetails() {
       );
       console.log("dataapi", response);
 
-      const formattedSeats = response.data.data.flatMap((level: any) =>
-        level.seats.map((seat: any) => ({
+      const formattedSeats = response.data.data.flatMap((level:any) =>
+        level.seats.map((seat: Seat) => ({
           icon: seat.icon,
           id: seat.id,
           row: seat.row,
@@ -70,8 +68,6 @@ export default function TravelDetails() {
         }))
       );
       setSeats(formattedSeats);
-      console.log("data.data", response.data.data);
-      console.log("formatdata", formattedSeats);
     } catch (error) {
       console.error("Error al obtener los detalles del viaje:", error);
     }
@@ -113,9 +109,6 @@ export default function TravelDetails() {
 const currentRegularSelections = seats.filter(s => 
   s.icon === "asiento" && s.status === "Seleccionado"
 ).length;
-console.log('currentRegularSelections',currentRegularSelections)
-console.log('seats',seats)
-console.log('seats',seats)
 
   const handleSelection = async (seatId: number) => {
     const dataFetchSelection = {
@@ -161,9 +154,6 @@ console.log('seats',seats)
   }
   const totalSelected = seats.filter(s => s.status === "Seleccionado").length;
     
-    console.log("maximo de pasajeros",maxSelectedCount)
-    console.log("aientos seleccionados",selectedCount)
-
     if (totalSelected >= maxSelectedCount) {
       alert(`Ya has seleccionado el máximo de ${maxSelectedCount} asientos`);
       return;
@@ -174,7 +164,6 @@ console.log('seats',seats)
         dataFetchSelection
       );
       console.log("resultado", response);
-      console.log("asiento seleccionado");
       await fetchData();
 
       const selectedSeat = seats.find(seat => seat.id === seatId);
@@ -189,7 +178,7 @@ console.log('seats',seats)
       if (updatedSeatsResponse) {
         const updatedSeats = seats.map((seat) => {
           const updatedSeat = updatedSeatsResponse.find(
-            (s: any) => s.id === seat.id
+            (s:any) => s.id === seat.id
           );
           return updatedSeat
             ? {
@@ -205,7 +194,6 @@ console.log('seats',seats)
       console.error("Error al obtener los detalles del viaje:", error);
     }
   };
-  console.log('asientos seleccionados:',currentRegularSelections + currentDisabledSelections)
 
   return (
     <BackgroundWrapper background="#EFEFEF">

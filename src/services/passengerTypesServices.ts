@@ -18,7 +18,7 @@ export const getPassengerTypes = async (): Promise<PassengerType[]> => {
       const data = response.data.data;
       console.log("Datos API", response.data.data);
 
-      const formatted = data.map((type: any) => ({
+      const formatted = data.map((type: PassengerType) => ({
         id: type.id,
         name: type.name,
         ageMin: type.ageMin,

@@ -8,6 +8,7 @@
 - [4. Instalación y Uso](#4-instalación-y-Uso)
 - [5. Diseño](#5-diseño)
 - [6. API](#6-api)
+- [7. Test](#7-test)
 
 ---
 
@@ -106,4 +107,18 @@ Puedes consultar la documentación completa de los endpoints aquí:
 ### 🔗 Peticiones en el proyecto
 Las peticiones a la API se manejaron con **Axios**, asegurando un manejo eficiente de las respuestas y errores.
 
+## 7. Test
+
+### Prueba Unitaria: PassengerModal
+Este test verifica el comportamiento básico del componente PassengerModal, que gestiona la selección de pasajeros (adultos, niños, etc.) y sus discapacidades. Es el único test implementado actualmente en el proyecto.
+
+#### Configuración Necesaria:
+
+Para que el test funcione sin modificar el código original, se requiere:
+
+#### Importar React
+- En el componente PassengerModal.tsx
+- En el archivo de test (passengerModal.test.tsx)
+
+![Test](./src/assets/test.jpg)
 ---

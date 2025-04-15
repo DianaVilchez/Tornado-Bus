@@ -1,6 +1,6 @@
-
+// import React from 'react';
 import { Dialog, Switch } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getPassengerTypes, PassengerType } from "../services/passengerTypesServices";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
